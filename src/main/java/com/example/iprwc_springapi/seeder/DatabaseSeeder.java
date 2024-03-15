@@ -13,6 +13,9 @@ public class DatabaseSeeder {
     @Autowired
     private ProductSeeder productSeeder;
 
+    @Autowired
+    private UserSeeder userSeeder;
+
 
     @EventListener
     public void seed(ContextRefreshedEvent event){
@@ -20,7 +23,9 @@ public class DatabaseSeeder {
             return;
         }
 
+
         productSeeder.seed();
+        userSeeder.seed();
         
         this.alreadySeeded = true;
     }

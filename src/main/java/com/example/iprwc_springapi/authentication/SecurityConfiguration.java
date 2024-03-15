@@ -24,7 +24,10 @@ public class SecurityConfiguration {
         http
             .csrf()
             .disable()
-            .authorizeHttpRequests()
+            .authorizeHttpRequests().requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/products").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/products").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/orders").hasAuthority("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/v1/auth/**", "/api/products")
             .permitAll().requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
             .anyRequest()

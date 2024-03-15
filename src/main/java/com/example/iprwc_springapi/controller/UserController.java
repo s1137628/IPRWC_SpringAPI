@@ -6,6 +6,7 @@ import com.example.iprwc_springapi.model.ApiResponse;
 import com.example.iprwc_springapi.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,6 +25,8 @@ public class UserController {
     public ApiResponse all() {
         return new ApiResponse(HttpStatus.ACCEPTED, this.userDAO.all());
     }
+
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody

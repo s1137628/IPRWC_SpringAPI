@@ -7,6 +7,7 @@ import com.example.iprwc_springapi.model.ApiResponse;
 import com.example.iprwc_springapi.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +25,9 @@ public class OrderController {
         return new ApiResponse(HttpStatus.ACCEPTED, this.orderDAO.all());
     }
 
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @ResponseBody
     public ApiResponse get(@PathVariable UUID id) {
         Order order;
@@ -37,6 +40,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @ResponseBody
     public ApiResponse save(@RequestBody Order newOrder){
         Order order = this.orderDAO.save(newOrder);
@@ -44,6 +48,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @ResponseBody
     public ApiResponse replace(@RequestBody Order order, @PathVariable UUID id){
         try{
@@ -56,6 +61,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
     public ApiResponse update(@RequestBody Order order, @PathVariable UUID id){
         try{
@@ -68,6 +74,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
     public ApiResponse delete(@PathVariable UUID id){
         try{

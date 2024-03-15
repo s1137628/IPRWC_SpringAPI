@@ -2,6 +2,10 @@ package com.example.iprwc_springapi.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
@@ -12,9 +16,19 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID productId;
+
+    @NotBlank(message = "Product name cannot be null or empty")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Invalid product name. Only letters and spaces are allowed.")
     private String name;
+
+    @NotBlank(message = "Product description cannot be null or empty")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Invalid product description. Only letters, numbers, and spaces are allowed.")
     private String description;
+
+    @NotNull(message = "Product price cannot be null")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Invalid product price. Price must be non-negative.")
     private double price;
+    @NotBlank(message = "Product image path cannot be null or empty")
     private String imagePath;
 
 

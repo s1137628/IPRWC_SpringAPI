@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -29,15 +31,21 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails, UUID uuid){
-        return generateToken(new HashMap<>(), userDetails, uuid);
+    public String generateToken(UserDetails userDetails, Role role, UUID id, String email){
+        return generateToken(new HashMap<>(), userDetails, role, id, email);
     }
 
-    public String generateToken(Map<String, Object> exstraClaim, UserDetails userDetails, UUID uuid){
+    public String generateToken(Map<String, Object> extraClaim, UserDetails userDetails, Role role, UUID id, String email){
+        String authorities = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        extraClaim.put("authorities", authorities);
+        System.out.println(extraClaim);
         return Jwts.builder()
-                .setClaims(exstraClaim)
+                .setClaims(extraClaim)
                 .setSubject(userDetails.getUsername())
-                .claim("id", uuid)
+                .claim("role", role).claim("id", id).claim("email", email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -64,7 +72,6 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
     }
 
     private Key getSignInKey() {
